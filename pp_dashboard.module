@@ -1,0 +1,172 @@
+<?php
+/**
+ * @file
+ * Code for the Dashboard.
+ */
+
+/**
+ * Implements hook_views_api().
+ */
+function dashboard_views_api($module = NULL, $api = NULL) {
+  return array(
+    "api" => "3.0",
+    'path' => drupal_get_path('module', 'dashboard') . '/views',
+  );
+}
+
+/**
+ * Implements hook_views_default_views().
+ */
+function dashboard_views_default_views() {
+  $module = 'dashboard';
+  $directory = 'views';
+  $extension = 'view.inc';
+  $name = 'view';
+
+  $return = [];
+  // Find all the files in the directory with the correct extension.
+  $files = file_scan_directory(drupal_get_path('module', $module) . "/$directory", "/.$extension/");
+  foreach ($files as $path => $file) {
+    require $path;
+    if (isset($$name)) {
+      $return[$$name->name] = $$name;
+    }
+  }
+
+  return $return;
+}
+
+/**
+ * Implements hook_admin_menu_output_build().
+ */
+function dashboard_admin_menu_output_build(&$content) {
+
+  // @TODO Verify this doesn't fire during anonymous sessions.
+  global $user;
+
+  $role = dashboard_get_user_role($user);
+
+  // Add User Role Information.
+  if (isset($content['users'])) {
+    $content['users']['role'] = array(
+      '#title' => $role,
+      '#description' => t('User Role'),
+      '#weight' => -80,
+      '#attributes' => array(
+        'class' => array('admin-menu-action', 'admin-menu-roles'),
+      ),
+      '#href' => 'admin/people/people',
+    );
+  }
+}
+
+/**
+ * Get most relevant user role.
+ *
+ * @param object $user
+ *   Drupal user object.
+ *
+ * @return string
+ *   A single user role.
+ */
+function dashboard_get_user_role($user) {
+  // Do not list these roles in the admin menu.
+  $excluded_roles = ['authenticated user'];
+
+  // Get current user's roles.
+  $roles = $user->roles;
+
+  // Don't return user roles in the exclusion list.
+  $roles = array_diff($roles, $excluded_roles);
+
+  // Users should not have more than 1 role.
+  return end($roles);
+}
+
+/**
+ * Generates a list of links to available dashbaord content actions.
+ *
+ * @param object $node
+ *   The node managed by workbench moderation being acted upon.
+ * @param array $url_options
+ *   An array of options to pass, following the url() function syntax.
+ *
+ * @return array
+ *   A list of links to display with the revision.
+ */
+function dashboard_get_dashboard_links($node, $url_options = array()) {
+  // Make sure that this node is moderated.
+  if (!workbench_moderation_node_moderated($node)) {
+    return;
+  }
+
+  // Build links to available moderation states.
+  $links = [];
+  $revision = $node->workbench_moderation['my_revision'];
+  $links[] = [
+    'title' => $revision->title,
+  ];
+
+  if (isset($node->workbench_moderation['published']) && $revision->vid == $node->workbench_moderation['published']->vid) {
+    $links[] = array_merge($url_options, [
+      'title' => t('View'),
+      'href' => "node/{$revision->nid}",
+      'query' => [
+        'token' => drupal_get_token("{$node->nid}:{$node->vid}"),
+      ],
+    ]);
+    $links[] = array_merge($url_options, [
+      'title' => t('Delete Node'),
+      'href' => "node/{$revision->nid}/delete",
+      'query' => [
+        'token' => drupal_get_token("{$node->nid}:{$node->vid}"),
+      ],
+    ]);
+  }
+  elseif ($revision->vid == $node->workbench_moderation['current']->vid) {
+    $links[] = array_merge($url_options, [
+      'title' => t('View'),
+      'href' => "node/{$revision->nid}/current-revision",
+      'query' => [
+        'token' => drupal_get_token("{$node->nid}:{$node->vid}"),
+      ],
+    ]);
+
+    $links[] = array_merge($url_options, [
+      'title' => t('Delete Revision'),
+      'href' => "node/{$revision->nid}/revisions/{$revision->vid}/delete",
+      'query' => [
+        'token' => drupal_get_token("{$node->nid}:{$node->vid}"),
+      ],
+    ]);
+  }
+  else {
+    $links[] = array_merge($url_options, [
+      'title' => t('View'),
+      'href' => "node/{$revision->nid}/revisions/{$revision->vid}/view",
+      'query' => [
+        'token' => drupal_get_token("{$node->nid}:{$node->vid}"),
+      ],
+    ]);
+    $links[] = array_merge($url_options, [
+      'title' => t('Delete Revision'),
+      'href' => "node/{$revision->nid}/revisions/{$revision->vid}/delete",
+      'query' => [
+        'token' => drupal_get_token("{$node->nid}:{$node->vid}"),
+      ],
+    ]);
+  }
+
+  // If this is the current moderation version.
+  if (!empty($node->workbench_moderation['published']) && $revision->vid == $node->workbench_moderation['published']->vid) {
+    $links[] = array_merge($url_options, [
+      'title' => t('Unpublish'),
+      'href' => "node/{$revision->nid}/moderation/{$node->vid}/unpublish",
+      'query' => [
+        'token' => drupal_get_token("{$node->nid}:{$node->vid}"),
+      ],
+    ]);
+  }
+
+  return $links;
+}

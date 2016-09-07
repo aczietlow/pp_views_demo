@@ -1,0 +1,25 @@
+.cdash-quick-edit .node-form > div > div {
+    display: none;
+}
+
+.cdash-quick-edit .node-form > div > div.form-actions,
+.cdash-quick-edit .node-form > div > div.show-field {
+    display: block;
+}
+
+.cdash-quick-edit .node-form > div > .vertical-tabs {
+  display: block;
+  margin-left: 0;
+}
+
+.cdash-quick-edit .node-form > div > .vertical-tabs .vertical-tabs-list {
+  display: none;
+}
+
+.cdash-quick-edit .node-form > div > .vertical-tabs .vertical-tabs-panes fieldset {
+  display: none;
+}
+
+.cdash-quick-edit .node-form > div > .vertical-tabs .vertical-tabs-panes fieldset .fieldset-wrapper > div {
+  display: none;
+}

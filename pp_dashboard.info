@@ -1,0 +1,17 @@
+name = Piped Piper Dashboard
+description = Dashboard custom module.
+core = 7.x
+package = Pied Piper Rules, Views, Workflow
+
+dependencies[] = admin_menu
+dependencies[] = better_exposed_filters
+dependencies[] = pp_notifications
+dependencies[] = libraries
+dependencies[] = workbench_moderation
+dependencies[] = views_bulk_operations
+dependencies[] = views_contextual_filters_or
+
+files[] = views/pp_dashboard_handler_field_links.inc
+files[] = views/pp_dashboard_handler_filter_reviewer.inc
+files[] = views/pp_dashboard_handler_filter_service_topics.inc
+files[] = views/pp_dashboard_handler_filter_services.inc

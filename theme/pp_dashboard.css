@@ -1,0 +1,64 @@
+.views-exposed-widgets .description {
+	max-width: 100px;
+}
+
+/* Temp css */
+.messages {
+	display: none;
+}
+
+/* Lock Icons */
+.dashboard-lockYes {
+	background-image: url('http://imh01-inmotionhosting1.netdna-ssl.com/img/icon-lock.png');
+	font-size: 0px;
+	height: 24px;
+	width: 24px;
+}
+
+.dashboard-lockNo {
+	background-image: url('http://downloadicons.net/sites/default/files/small-red-lock-icon-46757.png');
+	font-size: 0px;
+	height: 24px;
+	width: 24px;
+}
+
+/* Sticky Icons */
+.dashboard-sticky {
+	background-image: url('http://sifaka.cs.uiuc.edu/~yuelu2/opinionintegration/health/pics/redpin.png');
+	font-size: 0px;
+	height: 24px;
+	width: 24px;
+}
+
+.dashboard-not-sticky {
+	background-image: url('http://icons.iconarchive.com/icons/double-j-design/origami-colored-pencil/24/red-notes-icon.png');
+	font-size: 0px;
+	height: 24px;
+	width: 24px;
+}
+
+/* Quick styling for exposed widgets */
+.views-exposed-widget {
+  vertical-align: top;
+}
+
+.cdash-body {
+  display: none;
+}
+
+.show-hide-body {
+  float: right;
+}
+
+.show-hide-filters {
+	float: right;
+}
+
+.cdash-show-all,
+.cdash-show-mine {
+  float: right;
+}
+
+ul.dashboard-links {
+	list-style-type: none;
+}
